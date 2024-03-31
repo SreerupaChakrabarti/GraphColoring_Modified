@@ -10,6 +10,8 @@
             int *sequence;  // An array of length seqLength. Defines a coloration of the graph
             int numConflicts;   // number of conflicting edges for the given coloring
             int fitness;    // fitness based on the number of conflicting edges
+            int rank;       // rank of the chromosome
+            double rankProbability; // rank probability of the chromosome
         } Chromosome;
 
         void swap(int *num1, int *num2) {
@@ -64,60 +66,41 @@
             Output: A selection/ mating pool of chromosomes based on their fitness values
         [Selection is done using Rank Selection method]
     */
+    // Rank selection function
     void selectChromosomes(Chromosome chromosomes[], Chromosome matingPool[], int numChromosomes) {
-        int sumRanks = (numChromosomes * (numChromosomes + 1)) / 2; // sum of ranks from 1 to numChromosomes
-        int cumulativeRank[numChromosomes];
 
-        cumulativeRank[0] = 1;
-        // finds cumulative rank of each chromosome
-        for (int j = 1; j < numChromosomes; j++) {
-            cumulativeRank[j] = cumulativeRank[j - 1] + (numChromosomes - j + 1);
-        }
-
-        int l = 1;
-        // selects chromosomes
-        while (l <= numChromosomes) {
-            for (int j = 0; j < numChromosomes; j++) {
-                // computes the probability of selecting each chromosome
-                double pRankj = (double)(cumulativeRank[j] - 1) / sumRanks;
-               
-            }
-
-            // generate a random number r from interval (0, sumRanks)
-            int r = rand() % sumRanks;
-            
-            int j = 0;
-            int S = 0;
-            while (j < numChromosomes) {
-                S += cumulativeRank[j];
-                if (r <= S) {
-                    
-                    copyChromosome(&chromosomes[j], &matingPool[l - 1]); 
-                    break;
+        for (int i = 0; i < numChromosomes - 1; i++) { //chromosmes are sorted based on their fitness value
+            for (int j = 0; j < numChromosomes - i - 1; j++) {
+                if (chromosomes[j].fitness > chromosomes[j + 1].fitness) {
+                    Chromosome temp = chromosomes[j];
+                    chromosomes[j] = chromosomes[j + 1];
+                    chromosomes[j + 1] = temp;
                 }
-                j++;
             }
-            l++;
         }
+
+        //assigning the ranks
+        for (int i = 0; i < numChromosomes; i++) {
+            chromosomes[i].rank = numChromosomes - i;
+        }
+
+        double totalRank = (numChromosomes * (numChromosomes + 1)) / 2.0;  //calculating the sum of ranks
+        double cumulativeProb = 0.0;
+
+        for (int i = 0; i < numChromosomes; i++) {
+            cumulativeProb += (double)chromosomes[i].rank / totalRank;  //calculatng rank probability
+            chromosomes[i].rankProbability = cumulativeProb;
+
+            double randNum = (double)rand() / RAND_MAX;
+
+            //select chromosomes if random number is less than or equal to cumulative probability
+            if (randNum <= cumulativeProb) {
+                copyChromosome(&chromosomes[i], &matingPool[i]);
+            }
+        }
+        return;
     }
 
-    // void selectChromosomes(Chromosome chromosomes[], Chromosome matingPool[], int numChromosomes) {
-    
-    //     int sumRanks=(numChromosomes * (numChromosomes + 1)) / 2; //finds sum of the ranks from 1 to numChromosomes
-
-    //     for (int i=0; i<numChromosomes; i++) {
-    //         int randRank=rand()% sumRanks+ 1; //generates a random rank
-    //         int cumulativeRank=0;
-    //         int index=0;
-
-    //         while (cumulativeRank+ (numChromosomes- index)<randRank) {
-    //             cumulativeRank+=(numChromosomes-index);
-    //             index++;
-    //         }
-
-    //         copyChromosome(&chromosomes[index], &matingPool[i]); //chromosome is copied to the mating pool
-    //     }
-    // }
 
     /*
             crossover():
@@ -250,33 +233,75 @@
             Input: A chromosome, length of that chromosome, and the highest order gene
             Output: Reverses the sequence between two randomly selected points to generate a new mutated sequence
     */
-    void mutate(Chromosome *chromosome, int numGenes, int highestGene) {
-        int point1=rand() % numGenes;
-        int point2=rand() % numGenes;  //generates two random points in the sequence chromosome
 
-        int start=point1 < point2 ? point1 : point2;
-        int end=point1 < point2 ? point2 : point1;  //sets the start and end point for the swapping to take place
+   void mutate(Chromosome chromosome,int numGenes,int highestGene){
+		int randIndex=rand()%numGenes;
+		
+		int randGene=chromosome.sequence[randIndex];
+		while(randGene==chromosome.sequence[randIndex]){
+			randGene=rand()%highestGene+1;
+		}
+		
+		chromosome.sequence[randIndex]=randGene;
 
-        while (start<end) {
-            swap(&chromosome->sequence[start], &chromosome->sequence[end]);
-            start++;
-            end--;
-        }
-    }
+		return ;
+	}
+	
+	/*
+		mutateChromosomes():
+			Input: A list of chromosomes, length of that list, mutation probability, known chromatic number
+			Output: Mutation of the chromosomes based on the mutation probability
+	*/
+	void mutateChromosomes(Chromosome chromosomes[],int numChromosomes,double probability,int chromaticNum){
+		int chromosome;
+		int numMutation=0;
 
-    /*
-        mutateChromosomes():
-            Input: A list of chromosomes, length of that list, mutation probability, and known chromatic number
-            Output: Mutation of the chromosomes based on the mutation probability
-    */
-    void mutateChromosomes(Chromosome chromosomes[], int numChromosomes, double probability, int chromaticNum) {
-        for (int i= 0; i< numChromosomes; i++) {
-            double random=(double)rand() / RAND_MAX; 
+		for(int i=0;i<numChromosomes;i++){
+			double random=1.0*rand()/RAND_MAX;
+			
+			chromosome=0;
 
-            if (random<=probability) {
-                mutate(&chromosomes[i], chromosomes[i].seqLength, chromaticNum); //function call to mutate the sequence
-            }
-        }
-    }
+			if(random<=probability){
+				chromosome=rand()%numChromosomes;
+
+				mutate(chromosomes[chromosome],chromosomes[chromosome].seqLength,chromaticNum);
+				numMutation++;
+			}
+		}
+
+		return ;
+	}
+    // void mutate(Chromosome *chromosome, int numGenes, int highestGene) {
+    //     int point1=rand() % numGenes;
+    //     int point2=rand() % numGenes;  //generates two random points in the sequence chromosome
+
+    //     int start=point1 < point2 ? point1 : point2;
+    //     int end=point1 < point2 ? point2 : point1;  //sets the start and end point for the swapping to take place
+
+    //     while (start<end) {
+    //         swap(&chromosome->sequence[start], &chromosome->sequence[end]);
+    //         start++;
+    //         end--;
+    //     }
+    // }
+
+    // /*
+    //     mutateChromosomes():
+    //         Input: A list of chromosomes, length of that list, mutation probability, and known chromatic number
+    //         Output: Mutation of the chromosomes based on the mutation probability
+    // */
+
+    // void mutateChromosomes(Chromosome chromosomes[], int numChromosomes, double probability, int chromaticNum) {
+    //     int numMutation=0;
+    //     for (int i= 0; i< numChromosomes; i++) {
+    //         double random=1.0*rand()/RAND_MAX; 
+
+    //         if (random<=probability) {
+    //             mutate(&chromosomes[i], chromosomes[i].seqLength, chromaticNum); //function call to mutate the sequence
+    //             numMutation++;
+    //         }
+    //     }
+    // }
 
 #endif 
+
