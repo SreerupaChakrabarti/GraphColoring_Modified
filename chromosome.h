@@ -84,11 +84,6 @@
             chromosomes[i].rank = numChromosomes - i;
         }
 
-        //assigning the ranks
-        for (int i = 0; i < numChromosomes; i++) {
-            chromosomes[i].rank = numChromosomes - i;
-        }
-
         double totalRank = (numChromosomes * (numChromosomes + 1)) / 2.0;  //calculating the sum of ranks
 
         for (int i = 0; i < numChromosomes; i++) {
