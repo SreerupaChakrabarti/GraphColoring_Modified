@@ -7,7 +7,7 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
-#include"getAdjList.h"
+#include"structAdj.h"
 
 /*
 typedef struct Node{
