@@ -7,7 +7,7 @@
 #include"chromosome.h"
 #include"fitness.h"
 
-#define NUM_CHROMOSOMES 100
+#define NUM_CHROMOSOMES 1000
 #define CROSS_PROBABILITY 0.7
 #define MUTATE_PROBABILITY 0.06
 #define NUM_GENERATIONS 10000
