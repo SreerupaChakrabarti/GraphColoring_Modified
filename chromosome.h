@@ -69,43 +69,54 @@
     // Rank selection function
     void selectChromosomes(Chromosome chromosomes[], Chromosome matingPool[], int numChromosomes) {
 
-        for (int i = 0; i < numChromosomes - 1; i++) { //chromosmes are sorted based on their fitness value
-            for (int j = 0; j < numChromosomes - i - 1; j++) {
-                if (chromosomes[j].fitness > chromosomes[j + 1].fitness) {
-                    Chromosome temp = chromosomes[j];
-                    chromosomes[j] = chromosomes[j + 1];
-                    chromosomes[j + 1] = temp;
+            int indices[numChromosomes];  
+            
+            for (int i = 0; i < numChromosomes; i++) {
+                indices[i] = i;
+            }
+
+            for (int i = 0; i < numChromosomes - 1; i++) {
+                for (int j = 0; j < numChromosomes - i - 1; j++) {
+                    if (chromosomes[indices[j]].fitness > chromosomes[indices[j + 1]].fitness) {
+                        int temp = indices[j];
+                        indices[j] = indices[j + 1];
+                        indices[j + 1] = temp;
+                    }
                 }
             }
-        }
 
-        //assigning the ranks
-        for (int i = 0; i < numChromosomes; i++) {
-            chromosomes[i].rank = numChromosomes - i;
-        }
-
-        double totalRank = (numChromosomes * (numChromosomes + 1)) / 2.0;  //calculating the sum of ranks
-
-        for (int i = 0; i < numChromosomes; i++) {
-            chromosomes[i].rankProbability = (double)chromosomes[i].rank / totalRank;  //calculatng rank probability
-        }
-
-        double cumulativeProb = 0.0;
-
-        for (int i = 0; i < numChromosomes; i++) {
-            cumulativeProb = cumulativeProb + chromosomes[i].rankProbability;
-
-            double randNum = (double)rand() / RAND_MAX;
-
-            //select chromosomes if random number is less than or equal to cumulative probability
-            if (randNum <= cumulativeProb) {
-                copyChromosome(&chromosomes[i], &matingPool[i]);
+            //assigning the ranks
+            for (int i = 0; i < numChromosomes; i++) {
+                chromosomes[indices[i]].rank = numChromosomes - i;
             }
-        }
-        return;
-    }
 
-	//Crossover logic based on ordered crossover
+            double totalRank = (numChromosomes * (numChromosomes + 1)) / 2.0;  //calculating the sum of ranks
+
+            for (int i = 0; i < numChromosomes; i++) {
+                chromosomes[indices[i]].rankProbability = (double)chromosomes[i].rank / totalRank;  //calculatng rank probability
+            }
+
+
+            double cumulativeProb = 0.0;
+
+            for (int i = 0; i < numChromosomes; i++) {
+                cumulativeProb = cumulativeProb + chromosomes[indices[i]].rankProbability;
+
+                double randNum = (double)rand() / RAND_MAX;
+
+                //select chromosomes if random number is less than or equal to cumulative probability
+                if (randNum <= cumulativeProb) {
+                    copyChromosome(&chromosomes[i], &matingPool[i]);
+                }
+            }
+            return;
+        }
+
+	 /*
+            crossover():
+                Input: Two chromosomes and their length i.e., number of genes
+                Output: Crossover based on ordered crossover
+        */
 	void crossover(int sequence1[],int sequence2[],int numGenes){
 		//Choose the random point
 		int point1 = rand()%numGenes;
@@ -121,11 +132,7 @@
 		}
 	}
 
-    /*
-            crossover():
-                Input: Two chromosomes and their length i.e., number of genes
-                Output: A two point crossover between the given chromosomes to produce two childrens
-        */
+
 /*
         void crossover(Chromosome chromosome1,Chromosome chromosome2,int numGenes){
             int point1=0;
@@ -175,79 +182,6 @@
 
 		return ;
 	}
-
-    // /*
-    //     crossover():
-    //         Input: Two chromosomes and their length i.e., number of genes
-    //         Output: Order based crossover between the given chromosomes to produce two children
-    // */
-    // void crossover(Chromosome chromosome1, Chromosome chromosome2, Chromosome *child1, Chromosome *child2) {
-    //     int *visited1 = (int *)calloc(chromosome1.seqLength, sizeof(int));
-    //     int *visited2 = (int *)calloc(chromosome2.seqLength, sizeof(int));
-
-    //     int point1 = rand() % chromosome1.seqLength;
-    //     int point2 = rand() % chromosome2.seqLength;
-    //     int temp = point2;
-
-    //     // Mark visited genes
-    //     for (int i = point1; i != temp; i = (i + 1) % chromosome1.seqLength) {
-    //         child1->sequence[i] = chromosome1.sequence[i];
-    //         visited1[child1->sequence[i]] = 1;
-    //     }
-    //     child1->sequence[temp] = chromosome2.sequence[temp];
-    //     visited1[child1->sequence[temp]] = 1;
-
-    //     for (int i = point2; i != point1; i = (i + 1) % chromosome2.seqLength) {
-    //         child2->sequence[i] = chromosome2.sequence[i];
-    //         visited2[child2->sequence[i]] = 1;
-    //     }
-    //     child2->sequence[point1] = chromosome1.sequence[point1];
-    //     visited2[child2->sequence[point1]] = 1;
-
-    //     // Fill remaining positions in children
-    //     int index1 = (point1 + 1) % chromosome1.seqLength;
-    //     int index2 = (point2 + 1) % chromosome2.seqLength;
-
-    //     for (int i = (point2 + 1) % chromosome2.seqLength; i != point2; i = (i + 1) % chromosome2.seqLength) {
-    //         if (!visited1[chromosome2.sequence[i]]) {
-    //             child1->sequence[index1] = chromosome2.sequence[i];
-    //             index1 = (index1 + 1) % chromosome1.seqLength;
-    //             visited1[child1->sequence[index1]] = 1;
-    //         }
-    //     }
-
-    //     for (int i = (point1 + 1) % chromosome1.seqLength; i != point1; i = (i + 1) % chromosome1.seqLength) {
-    //         if (!visited2[chromosome1.sequence[i]]) {
-    //             child2->sequence[index2] = chromosome1.sequence[i];
-    //             index2 = (index2 + 1) % chromosome2.seqLength;
-    //             visited2[child2->sequence[index2]] = 1;
-    //         }
-    //     }
-
-    //     free(visited1);
-    //     free(visited2);
-    // }
-
-    // /*
-    //     crossChromosomes():
-    //         Input: A list of chromosomes, the length of that list i.e., the number of chromosomes, and crossover probability
-    //         Output: Order based crossover between all the chromosomes based on the crossover probability
-    // */
-    // void crossChromosomes(Chromosome chromosomes[], int numChromosomes, double probability) {
-    //     for (int i = 0; i < numChromosomes / 2; i++) {
-    //         double random = (double)rand() / RAND_MAX;
-
-    //         if (random <= probability) {
-    //             int index1 = rand() % numChromosomes;
-    //             int index2 = rand() % numChromosomes;
-
-    //             Chromosome child1, child2;
-    //             crossover(chromosomes[index1], chromosomes[index2], &child1, &child2);
-    //             copyChromosome(&child1, &chromosomes[index1]);
-    //             copyChromosome(&child2, &chromosomes[index2]);
-    //         }
-    //     }
-    // }
 
     /*
         mutate():
