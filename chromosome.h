@@ -160,6 +160,23 @@
                 Input: A list of chromosomes, the length of the list i.e., the number of chromosomes and crossover probability
                 Output: Crossover between all the chromosomes based on the chrossover probability
         */
+
+/*	void crossChromosomes(Chromosome chromosomes[], int numChromosomes, double probability) {
+            
+            int numCrossover = 0;
+            for (int i = 0; i < numChromosomes - 1; i++) {
+                for (int j = i + 1; j < numChromosomes; j++) {
+                    double random = 1.0*rand()/RAND_MAX;
+                    
+                    if (random <= probability) {
+                        crossover(chromosomes[i].sequence, chromosomes[j].sequence, chromosomes[i].seqLength);
+                        numCrossover++;
+                    }
+                }
+            }
+	    return;
+        }
+*/
 	void crossChromosomes(Chromosome chromosomes[],int numChromosomes,double probability){
 		int index1,index2;
 		int numCrossover=0;
