@@ -67,7 +67,7 @@
         [Selection is done using Rank Selection method]
     */
     // Rank selection function
-    void selectChromosomes(Chromosome chromosomes[], Chromosome matingPool[], int numChromosomes) {
+        void selectChromosomes(Chromosome chromosomes[], Chromosome matingPool[], int numChromosomes) {
 
             int indices[numChromosomes];  
             
@@ -84,6 +84,10 @@
                     }
                 }
             }
+
+            // for (int i = 0; i < numChromosomes; i++) {
+            //     printf("%d\n",chromosomes[indices[i]].fitness);
+            // }
 
             //assigning the ranks
             for (int i = 0; i < numChromosomes; i++) {
@@ -106,7 +110,7 @@
 
                 //select chromosomes if random number is less than or equal to cumulative probability
                 if (randNum <= cumulativeProb) {
-                    copyChromosome(&chromosomes[i], &matingPool[i]);
+                    copyChromosome(&chromosomes[indices[i]], &matingPool[i]);
                 }
             }
             return;
@@ -117,7 +121,7 @@
                 Input: Two chromosomes and their length i.e., number of genes
                 Output: Crossover based on ordered crossover
         */
-	void crossover(int sequence1[],int sequence2[],int numGenes){
+/*	void crossover(int sequence1[],int sequence2[],int numGenes){
 		//Choose the random point
 		int point1 = rand()%numGenes;
 		
@@ -131,9 +135,9 @@
 			swap(&sequence1[i],&sequence2[i]);
 		}
 	}
+*/
 
 
-/*
         void crossover(Chromosome chromosome1,Chromosome chromosome2,int numGenes){
             int point1=0;
             int point2=0;
@@ -149,7 +153,7 @@
             
             return ;
         }
-*/
+
 
         /*
             crossChromosomes():
