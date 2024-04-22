@@ -67,52 +67,62 @@
         [Selection is done using Rank Selection method]
     */
     // Rank selection function
-        void selectChromosomes(Chromosome chromosomes[], Chromosome matingPool[], int numChromosomes) {
-
+    void selectChromosomes(Chromosome chromosomes[], Chromosome matingPool[], int numChromosomes) {
+            
             int indices[numChromosomes];  
             
             for (int i = 0; i < numChromosomes; i++) {
+          
                 indices[i] = i;
             }
-
+            
             for (int i = 0; i < numChromosomes - 1; i++) {
+        
                 for (int j = 0; j < numChromosomes - i - 1; j++) {
+             
                     if (chromosomes[indices[j]].fitness > chromosomes[indices[j + 1]].fitness) {
+             
                         int temp = indices[j];
                         indices[j] = indices[j + 1];
                         indices[j + 1] = temp;
+                     
                     }
                 }
             }
-
+           
             // for (int i = 0; i < numChromosomes; i++) {
             //     printf("%d\n",chromosomes[indices[i]].fitness);
             // }
 
             //assigning the ranks
             for (int i = 0; i < numChromosomes; i++) {
+            
                 chromosomes[indices[i]].rank = numChromosomes - i;
             }
 
             double totalRank = (numChromosomes * (numChromosomes + 1)) / 2.0;  //calculating the sum of ranks
 
             for (int i = 0; i < numChromosomes; i++) {
+               
                 chromosomes[indices[i]].rankProbability = (double)chromosomes[i].rank / totalRank;  //calculatng rank probability
             }
-
+            
 
             double cumulativeProb = 0.0;
 
             for (int i = 0; i < numChromosomes; i++) {
+               
                 cumulativeProb = cumulativeProb + chromosomes[indices[i]].rankProbability;
 
                 double randNum = (double)rand() / RAND_MAX;
 
                 //select chromosomes if random number is less than or equal to cumulative probability
                 if (randNum <= cumulativeProb) {
+                    
                     copyChromosome(&chromosomes[indices[i]], &matingPool[i]);
                 }
             }
+            
             return;
         }
 
@@ -121,96 +131,101 @@
                 Input: Two chromosomes and their length i.e., number of genes
                 Output: Crossover based on ordered crossover
         */
-/*	void crossover(int sequence1[],int sequence2[],int numGenes){
-		//Choose the random point
-		int point1 = rand()%numGenes;
-		
-		//Choice variable determines which half to swap
-		int choice = rand()%2;
+        // void crossover(int sequence1[],int sequence2[],int numGenes){
+        //     //Choose the random point
+        //     int point1 = rand()%numGenes;
+            
+        //     //Choice variable determines which half to swap
+        //     int choice = rand()%2;
 
-		int startIndex = (choice==0)?0:point1;
-		int endIndex = (choice==0)?point1:(numGenes-1);
+        //     int startIndex = (choice==0)?0:point1;
+        //     int endIndex = (choice==0)?point1:(numGenes-1);
 
-		for(int i=startIndex;i<=endIndex;i++){
-			swap(&sequence1[i],&sequence2[i]);
-		}
-	}
-*/
-
+        //     for(int i=startIndex;i<=endIndex;i++){
+        //         swap(&sequence1[i],&sequence2[i]);
+        //     }
+        // }
 
         void crossover(Chromosome chromosome1,Chromosome chromosome2,int numGenes){
-            int point1=0;
-            int point2=0;
+            printf("%d\n",1);
+            //Choose the random point
+            //int point1 = (rand()%10000)+1;
+            int point1=(rand()%numGenes+1)+1;
+            //float point1=(22000/numGenes)+1;
+            //Choice variable determines which half to swap
+            // int choice = rand()%2;
 
-            while(point1>=point2){
-                point1=rand()%numGenes;
-                point2=rand()%numGenes;
-            }
+            // int startIndex = (choice==0)?0:point1;
+            // int endIndex = (choice==0)?point1:(numGenes-1);
+            // printf("%s\n","hello");
             
-            for(int i=point1;i<=point2;i++){
+            printf("%d\n",123);
+            for(int i=0;i<=point1;i++){
+                printf("%d\n",point1);
                 swap(&chromosome1.sequence[i],&chromosome2.sequence[i]);
             }
-            
-            return ;
         }
 
+	/*
+		crossChromosomes():
+			Input: A list of chromosomes, the length of the list i.e., the number of chromosomes and crossover probability
+			Output: Crossover between all the chromosomes based on the crossover probability
+	*/
 
-        /*
-            crossChromosomes():
-                Input: A list of chromosomes, the length of the list i.e., the number of chromosomes and crossover probability
-                Output: Crossover between all the chromosomes based on the chrossover probability
-        */
-
-/*	void crossChromosomes(Chromosome chromosomes[], int numChromosomes, double probability) {
+        // void crossChromosomes(Chromosome chromosomes[], int numChromosomes, double probability) {
             
-            int numCrossover = 0;
-            for (int i = 0; i < numChromosomes - 1; i++) {
-                for (int j = i + 1; j < numChromosomes; j++) {
-                    double random = 1.0*rand()/RAND_MAX;
-                    
-                    if (random <= probability) {
-                        crossover(chromosomes[i].sequence, chromosomes[j].sequence, chromosomes[i].seqLength);
-                        numCrossover++;
+        //     for (int i = 0; i < numChromosomes; i++) {
+        //         double random = (double)rand() / RAND_MAX;
+
+        //         // Check if crossover should occur based on the probability
+        //         if (random <= probability) {
+        //             // Select two random indices for chromosomes
+        //             int index1 = rand() % numChromosomes;
+        //             int index2 = rand() % numChromosomes;
+
+        //             // Ensure the indices are different
+        //             while (index1 == index2) {
+        //                 index2 = rand() % numChromosomes;
+        //             }
+
+        //             // Perform crossover between the selected chromosomes
+        //             crossover(chromosomes[index1].sequence, chromosomes[index2].sequence, chromosomes[index1].seqLength);
+        //         }
+        //     }
+        //     return;
+        // }
+
+         void crossChromosomes(Chromosome chromosomes[], int numChromosomes, double probability) {
+           
+            for (int i = 0; i < numChromosomes; i++) {
+                
+                double random = (double)rand() / RAND_MAX;
+
+                // Check if crossover should occur based on the probability
+                if (random <= probability) {
+                    // Select two random indices for chromosomes
+                    int index1 = (rand() % numChromosomes)+1;
+                    int index2 = (rand() % numChromosomes)+1;
+
+                    // Ensure the indices are different
+                    while (index1 == index2) {
+                        index2 = (rand() % numChromosomes)+1;
                     }
+                    
+                    // Perform crossover between the selected chromosomes
+                    crossover(chromosomes[index1], chromosomes[index2], chromosomes[index1].seqLength);
                 }
             }
-	    return;
+            return;
         }
-*/
-	void crossChromosomes(Chromosome chromosomes[],int numChromosomes,double probability){
-		int index1,index2;
-		int numCrossover=0;
-
-		for(int i=0;i<numChromosomes/2;i++){
-			double random=1.0*rand()/RAND_MAX;
-
-			//printf("Rand number: %lf\n",random);
-
-			index1=0;
-			index2=0;
-
-			if(random<=probability){
-				while(index1==index2){
-					index1=rand()%numChromosomes;
-					index2=rand()%numChromosomes;
-				}
-
-				crossover(chromosomes[index1].sequence,chromosomes[index2].sequence,chromosomes[index1].seqLength);
-				numCrossover++;
-
-			}
-		}
-
-		return ;
-	}
-
+	
     /*
         mutate():
             Input: A chromosome, length of that chromosome, and the highest order gene
             Output: Reverses the sequence between two randomly selected points to generate a new mutated sequence
     */
 
-   void mutate(Chromosome chromosome,int numGenes,int highestGene){
+    void mutate(Chromosome chromosome,int numGenes,int highestGene){
 		int randIndex=rand()%numGenes;
 		
 		int randGene=chromosome.sequence[randIndex];
@@ -247,37 +262,4 @@
 
 		return ;
 	}
-    // void mutate(Chromosome *chromosome, int numGenes, int highestGene) {
-    //     int point1=rand() % numGenes;
-    //     int point2=rand() % numGenes;  //generates two random points in the sequence chromosome
-
-    //     int start=point1 < point2 ? point1 : point2;
-    //     int end=point1 < point2 ? point2 : point1;  //sets the start and end point for the swapping to take place
-
-    //     while (start<end) {
-    //         swap(&chromosome->sequence[start], &chromosome->sequence[end]);
-    //         start++;
-    //         end--;
-    //     }
-    // }
-
-    // /*
-    //     mutateChromosomes():
-    //         Input: A list of chromosomes, length of that list, mutation probability, and known chromatic number
-    //         Output: Mutation of the chromosomes based on the mutation probability
-    // */
-
-    // void mutateChromosomes(Chromosome chromosomes[], int numChromosomes, double probability, int chromaticNum) {
-    //     int numMutation=0;
-    //     for (int i= 0; i< numChromosomes; i++) {
-    //         double random=1.0*rand()/RAND_MAX; 
-
-    //         if (random<=probability) {
-    //             mutate(&chromosomes[i], chromosomes[i].seqLength, chromaticNum); //function call to mutate the sequence
-    //             numMutation++;
-    //         }
-    //     }
-    // }
-
-#endif 
-
+#endif
