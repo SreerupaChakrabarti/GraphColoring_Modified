@@ -131,40 +131,40 @@
                 Input: Two chromosomes and their length i.e., number of genes
                 Output: Crossover based on ordered crossover
         */
-        // void crossover(int sequence1[],int sequence2[],int numGenes){
-        //     //Choose the random point
-        //     int point1 = rand()%numGenes;
-            
-        //     //Choice variable determines which half to swap
-        //     int choice = rand()%2;
-
-        //     int startIndex = (choice==0)?0:point1;
-        //     int endIndex = (choice==0)?point1:(numGenes-1);
-
-        //     for(int i=startIndex;i<=endIndex;i++){
-        //         swap(&sequence1[i],&sequence2[i]);
-        //     }
-        // }
-
         void crossover(Chromosome chromosome1,Chromosome chromosome2,int numGenes){
-            printf("%d\n",1);
             //Choose the random point
-            //int point1 = (rand()%10000)+1;
-            int point1=(rand()%numGenes+1)+1;
-            //float point1=(22000/numGenes)+1;
-            //Choice variable determines which half to swap
-            // int choice = rand()%2;
-
-            // int startIndex = (choice==0)?0:point1;
-            // int endIndex = (choice==0)?point1:(numGenes-1);
-            // printf("%s\n","hello");
+            int point1 = rand()%numGenes;
             
-            printf("%d\n",123);
-            for(int i=0;i<=point1;i++){
-                printf("%d\n",point1);
+            //Choice variable determines which half to swap
+            int choice = rand()%2;
+
+            int startIndex = (choice==0)?0:point1;
+            int endIndex = (choice==0)?point1:(numGenes-1);
+
+            for(int i=startIndex;i<=endIndex;i++){
                 swap(&chromosome1.sequence[i],&chromosome2.sequence[i]);
             }
         }
+
+        // void crossover(Chromosome chromosome1,Chromosome chromosome2,int numGenes){
+        //     //printf("%d\n",1);
+        //     //Choose the random point
+        //     //int point1 = (rand()%10000)+1;
+        //     int point1=(rand()%numGenes+1);
+        //     //float point1=(22000/numGenes)+1;
+        //     //Choice variable determines which half to swap
+        //     // int choice = rand()%2;
+
+        //     // int startIndex = (choice==0)?0:point1;
+        //     // int endIndex = (choice==0)?point1:(numGenes-1);
+        //     // printf("%s\n","hello");
+        //     printf("%d\n",point1);
+        //     printf("%d\n",123);
+        //     for(int i=0;i<=point1;i++){
+                
+        //         swap(&chromosome1.sequence[i],&chromosome2.sequence[i]);
+        //     }
+        // }
 
 	/*
 		crossChromosomes():
@@ -172,52 +172,52 @@
 			Output: Crossover between all the chromosomes based on the crossover probability
 	*/
 
-        // void crossChromosomes(Chromosome chromosomes[], int numChromosomes, double probability) {
+        void crossChromosomes(Chromosome chromosomes[], int numChromosomes, double probability) {
             
-        //     for (int i = 0; i < numChromosomes; i++) {
-        //         double random = (double)rand() / RAND_MAX;
-
-        //         // Check if crossover should occur based on the probability
-        //         if (random <= probability) {
-        //             // Select two random indices for chromosomes
-        //             int index1 = rand() % numChromosomes;
-        //             int index2 = rand() % numChromosomes;
-
-        //             // Ensure the indices are different
-        //             while (index1 == index2) {
-        //                 index2 = rand() % numChromosomes;
-        //             }
-
-        //             // Perform crossover between the selected chromosomes
-        //             crossover(chromosomes[index1].sequence, chromosomes[index2].sequence, chromosomes[index1].seqLength);
-        //         }
-        //     }
-        //     return;
-        // }
-
-         void crossChromosomes(Chromosome chromosomes[], int numChromosomes, double probability) {
-           
             for (int i = 0; i < numChromosomes; i++) {
-                
                 double random = (double)rand() / RAND_MAX;
 
                 // Check if crossover should occur based on the probability
                 if (random <= probability) {
                     // Select two random indices for chromosomes
-                    int index1 = (rand() % numChromosomes)+1;
-                    int index2 = (rand() % numChromosomes)+1;
+                    int index1 = rand() % numChromosomes;
+                    int index2 = rand() % numChromosomes;
 
                     // Ensure the indices are different
                     while (index1 == index2) {
-                        index2 = (rand() % numChromosomes)+1;
+                        index2 = rand() % numChromosomes;
                     }
-                    
+
                     // Perform crossover between the selected chromosomes
                     crossover(chromosomes[index1], chromosomes[index2], chromosomes[index1].seqLength);
                 }
             }
             return;
         }
+
+        //  void crossChromosomes(Chromosome chromosomes[], int numChromosomes, double probability) {
+           
+        //     for (int i = 0; i < numChromosomes; i++) {
+                
+        //         double random = (double)rand() / RAND_MAX;
+
+        //         // Check if crossover should occur based on the probability
+        //         if (random <= probability) {
+        //             // Select two random indices for chromosomes
+        //             int index1 = (rand() % numChromosomes)+1;
+        //             int index2 = (rand() % numChromosomes)+1;
+
+        //             // Ensure the indices are different
+        //             while (index1 == index2) {
+        //                 index2 = (rand() % numChromosomes)+1;
+        //             }
+                    
+        //             // Perform crossover between the selected chromosomes
+        //             crossover(chromosomes[index1], chromosomes[index2], chromosomes[index1].seqLength);
+        //         }
+        //     }
+        //     return;
+        // }
 	
     /*
         mutate():
@@ -262,4 +262,5 @@
 
 		return ;
 	}
-#endif
+
+#endif 
