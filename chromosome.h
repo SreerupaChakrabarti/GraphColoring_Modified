@@ -42,7 +42,6 @@
             for (int i = 0; i < numChromosomes; i++) {
                 chromosomes[i].seqLength = numVertices;
                 chromosomes[i].sequence = (int *)calloc(numVertices, sizeof(int));
-
                 for (int j = 0; j < numVertices; j++) {
                     chromosomes[i].sequence[j] = rand() % highestColor + 1;
                 }
@@ -68,61 +67,46 @@
     */
     // Rank selection function
     void selectChromosomes(Chromosome chromosomes[], Chromosome matingPool[], int numChromosomes) {
-            
             int indices[numChromosomes];  
             
             for (int i = 0; i < numChromosomes; i++) {
-          
                 indices[i] = i;
             }
-            
             for (int i = 0; i < numChromosomes - 1; i++) {
-        
                 for (int j = 0; j < numChromosomes - i - 1; j++) {
-             
                     if (chromosomes[indices[j]].fitness > chromosomes[indices[j + 1]].fitness) {
-             
                         int temp = indices[j];
                         indices[j] = indices[j + 1];
                         indices[j + 1] = temp;
-                     
                     }
                 }
             }
-           
             // for (int i = 0; i < numChromosomes; i++) {
             //     printf("%d\n",chromosomes[indices[i]].fitness);
             // }
 
             //assigning the ranks
             for (int i = 0; i < numChromosomes; i++) {
-            
                 chromosomes[indices[i]].rank = numChromosomes - i;
             }
 
             double totalRank = (numChromosomes * (numChromosomes + 1)) / 2.0;  //calculating the sum of ranks
-
-            for (int i = 0; i < numChromosomes; i++) {
-               
+            for (int i = 0; i < numChromosomes; i++) {  
                 chromosomes[indices[i]].rankProbability = (double)chromosomes[i].rank / totalRank;  //calculatng rank probability
             }
-            
 
             double cumulativeProb = 0.0;
 
-            for (int i = 0; i < numChromosomes; i++) {
-               
+            for (int i = 0; i < numChromosomes; i++) {  
                 cumulativeProb = cumulativeProb + chromosomes[indices[i]].rankProbability;
 
                 double randNum = (double)rand() / RAND_MAX;
 
                 //select chromosomes if random number is less than or equal to cumulative probability
-                if (randNum <= cumulativeProb) {
-                    
+                if (randNum <= cumulativeProb) {  
                     copyChromosome(&chromosomes[indices[i]], &matingPool[i]);
                 }
             }
-            
             return;
         }
 
@@ -133,11 +117,11 @@
         */
         void crossover(Chromosome chromosome1,Chromosome chromosome2,int numGenes){
             //Choose the random point
-            int point1 = rand()%numGenes;
-            
+            int point1 = rand()%10;
+            //printf("%d\n",point1);
             //Choice variable determines which half to swap
             int choice = rand()%2;
-
+            //printf("%d\n",choice);
             int startIndex = (choice==0)?0:point1;
             int endIndex = (choice==0)?point1:(numGenes-1);
 
@@ -145,26 +129,7 @@
                 swap(&chromosome1.sequence[i],&chromosome2.sequence[i]);
             }
         }
-
-        // void crossover(Chromosome chromosome1,Chromosome chromosome2,int numGenes){
-        //     //printf("%d\n",1);
-        //     //Choose the random point
-        //     //int point1 = (rand()%10000)+1;
-        //     int point1=(rand()%numGenes+1);
-        //     //float point1=(22000/numGenes)+1;
-        //     //Choice variable determines which half to swap
-        //     // int choice = rand()%2;
-
-        //     // int startIndex = (choice==0)?0:point1;
-        //     // int endIndex = (choice==0)?point1:(numGenes-1);
-        //     // printf("%s\n","hello");
-        //     printf("%d\n",point1);
-        //     printf("%d\n",123);
-        //     for(int i=0;i<=point1;i++){
-                
-        //         swap(&chromosome1.sequence[i],&chromosome2.sequence[i]);
-        //     }
-        // }
+        
 
 	/*
 		crossChromosomes():
@@ -194,30 +159,6 @@
             }
             return;
         }
-
-        //  void crossChromosomes(Chromosome chromosomes[], int numChromosomes, double probability) {
-           
-        //     for (int i = 0; i < numChromosomes; i++) {
-                
-        //         double random = (double)rand() / RAND_MAX;
-
-        //         // Check if crossover should occur based on the probability
-        //         if (random <= probability) {
-        //             // Select two random indices for chromosomes
-        //             int index1 = (rand() % numChromosomes)+1;
-        //             int index2 = (rand() % numChromosomes)+1;
-
-        //             // Ensure the indices are different
-        //             while (index1 == index2) {
-        //                 index2 = (rand() % numChromosomes)+1;
-        //             }
-                    
-        //             // Perform crossover between the selected chromosomes
-        //             crossover(chromosomes[index1], chromosomes[index2], chromosomes[index1].seqLength);
-        //         }
-        //     }
-        //     return;
-        // }
 	
     /*
         mutate():
@@ -262,5 +203,72 @@
 
 		return ;
 	}
+
+    //     void mutateConflictingVertex(Chromosome *chromosome, int edges[][2], int numEdges) {
+    //     // First, find conflicting vertices
+    //     int *conflictingVertices = (int *)calloc(chromosome->seqLength, sizeof(int));
+    //     for (int i = 0; i < numEdges; i++) {
+    //         int vertex1 = edges[i][0];
+    //         int vertex2 = edges[i][1];
+    //         if (chromosome->sequence[vertex1] == chromosome->sequence[vertex2]) {
+    //             conflictingVertices[vertex1] = 1;
+    //             conflictingVertices[vertex2] = 1;
+    //         }
+    //     }
+
+    //     // Count the number of conflicting vertices
+    //     int numConflicting = 0;
+    //     for (int i = 0; i < chromosome->seqLength; i++) {
+    //         if (conflictingVertices[i]) {
+    //             numConflicting++;
+    //         }
+    //     }
+
+    //     if (numConflicting > 0) {
+    //         int randomIndex = rand() % numConflicting;
+    //         int count = 0;
+    //         int conflictingVertex = -1;
+    //         for (int i = 0; i < chromosome->seqLength; i++) {
+    //             if (conflictingVertices[i]) {
+    //                 if (count == randomIndex) {
+    //                     conflictingVertex = i;
+    //                     break;
+    //                 }
+    //                 count++;
+    //             }
+    //         }
+
+    //         // Generate a new color different from the adjacent colors
+    //         if (conflictingVertex != -1) {
+    //             int newColor;
+    //             do {
+    //                 newColor = rand() % chromosome->seqLength + 1; // Assuming colors range from 1 to seqLength
+    //             } while (newColor == chromosome->sequence[conflictingVertex]);
+
+    //             chromosome->sequence[conflictingVertex] = newColor;
+    //             printf("Vertex %d changed color to %d\n", conflictingVertex, newColor);
+    //         }
+    //     } else {
+    //         printf("No conflicting vertices to mutate.\n");
+    //     }
+
+    //     free(conflictingVertices);
+    // }
+
+    // void mutateChromosomes(Chromosome chromosomes[],int numChromosomes,double probability,int chromaticNum){
+	// 	int chromosome;
+	// 	int numMutation=0;
+
+	// 	for (int i = 0; i < numChromosomes; i++) {
+    //         double prob = (double)rand() / RAND_MAX;
+    //         if (prob < mutationRate) {
+    //             mutateConflictingVertex(&chromosomes[i], edges, numEdges);
+    //         }
+    //     }
+
+
+	// 	return ;
+	// }
+
 
 #endif 
