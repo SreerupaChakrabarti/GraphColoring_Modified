@@ -117,7 +117,7 @@
         */
         void crossover(Chromosome chromosome1,Chromosome chromosome2,int numGenes){
             //Choose the random point
-            int point1 = rand()%10;
+            int point1 = rand()%numGenes;
             //printf("%d\n",point1);
             //Choice variable determines which half to swap
             int choice = rand()%2;
