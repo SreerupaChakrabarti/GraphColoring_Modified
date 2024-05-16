@@ -66,7 +66,7 @@
         [Selection is done using Rank Selection method]
     */
     // Rank selection function
-    void selectChromosomes(Chromosome chromosomes[], Chromosome matingPool[], int numChromosomes) {
+        void selectChromosomes(Chromosome chromosomes[], Chromosome matingPool[], int numChromosomes) {
             int indices[numChromosomes];  
             
             for (int i = 0; i < numChromosomes; i++) {
@@ -89,26 +89,66 @@
             for (int i = 0; i < numChromosomes; i++) {
                 chromosomes[indices[i]].rank = numChromosomes - i;
             }
+            
+            // for (int i = 0; i < numChromosomes; i++) {
+            //     printf("%d\n",chromosomes[indices[i]].rank);
+            // }
 
             double totalRank = (numChromosomes * (numChromosomes + 1)) / 2.0;  //calculating the sum of ranks
             for (int i = 0; i < numChromosomes; i++) {  
                 chromosomes[indices[i]].rankProbability = (double)chromosomes[i].rank / totalRank;  //calculatng rank probability
             }
 
+            // for (int i = 0; i < numChromosomes; i++) {
+            //     printf("%f\n",chromosomes[indices[i]].rankProbability);
+            // }
+
             double cumulativeProb = 0.0;
 
             for (int i = 0; i < numChromosomes; i++) {  
                 cumulativeProb = cumulativeProb + chromosomes[indices[i]].rankProbability;
-
+                //printf("%f\n",cumulativeProb);
                 double randNum = (double)rand() / RAND_MAX;
-
+                //printf("%f\n",randNum);
                 //select chromosomes if random number is less than or equal to cumulative probability
                 if (randNum <= cumulativeProb) {  
-                    copyChromosome(&chromosomes[indices[i]], &matingPool[i]);
+                    copyChromosome(&chromosomes[indices[i]], &matingPool[indices[i]]);
                 }
             }
+            //printf("%d\n",123);
             return;
         }
+
+        // void selectChromosomes(Chromosome chromosomes[],Chromosome matingPool[],int numChromosomes){
+        //     int sumFitnesses=0;
+            
+        //     for(int i=0;i<numChromosomes;i++){
+        //         sumFitnesses+=chromosomes[i].fitness;
+        //     }
+
+        //     int randSum,chromosome,sum;
+        //     int index=0;
+
+        //     for(int i=0;i<numChromosomes;i++){
+        //         randSum=rand()%(sumFitnesses+1);
+                
+        //         chromosome=0;
+        //         sum=0;
+                
+        //         while(chromosome<numChromosomes && sum<=randSum){
+        //             sum+=chromosomes[chromosome].fitness;
+        //             chromosome++;
+        //         }
+                
+        //         //Copy the selected chromosome into the mating pool
+        //         --chromosome;
+
+        //         copyChromosome(&chromosomes[chromosome],&matingPool[index]);
+        //         index++;
+        //     }
+            
+        //     return ;
+        // }
 
 	 /*
             crossover():
@@ -124,7 +164,7 @@
             //printf("%d\n",choice);
             int startIndex = (choice==0)?0:point1;
             int endIndex = (choice==0)?point1:(numGenes-1);
-
+            //printf("%d\n%d",startIndex,endIndex);
             for(int i=startIndex;i<=endIndex;i++){
                 swap(&chromosome1.sequence[i],&chromosome2.sequence[i]);
             }
@@ -147,7 +187,7 @@
                     // Select two random indices for chromosomes
                     int index1 = rand() % numChromosomes;
                     int index2 = rand() % numChromosomes;
-
+                    // printf("%d\n%d",index1,index2);
                     // Ensure the indices are different
                     while (index1 == index2) {
                         index2 = rand() % numChromosomes;
